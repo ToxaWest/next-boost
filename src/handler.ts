@@ -54,6 +54,9 @@ type WrappedHandler = (
 
 const wrap: WrappedHandler = (cache, conf, renderer, plainHandler) => {
   return async (req, res) => {
+    if (!conf.userAgentFilter(req.headers['user-agent'])){
+        return plainHandler(req, res);
+    }
     req.url = filterUrl(req.url, conf.paramFilter)
     const { matched, ttl } = matchRule(conf, req.url)
     if (!matched) return plainHandler(req, res)
